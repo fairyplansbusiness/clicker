@@ -56,8 +56,9 @@
 
   // Boosters: repeatable upgrades bought with sparkles. Cost grows each level.
   const BOOSTERS = {
-    clickPower:   { name: 'Honey Boost', emoji: '🍯', effectLabel: 'sparkle per tap',    baseCost: 15, growth: 1.18 },
-    autoSparkles: { name: 'Busy Bees',   emoji: '🐝', effectLabel: 'sparkle per second', baseCost: 25, growth: 1.22 },
+    clickPower:   { name: 'Honey Boost',  emoji: '🍯', effectLabel: 'sparkle per tap',    baseCost: 15, growth: 1.18 },
+    autoSparkles: { name: 'Busy Bees',    emoji: '🐝', effectLabel: 'sparkle per second', baseCost: 25, growth: 1.22 },
+    luckyCharm:   { name: 'Lucky Charm',  emoji: '🍀', effectLabel: 'better lucky taps',  baseCost: 40, growth: 1.25 },
   };
 
   const TIPS = [
@@ -130,7 +131,8 @@
       totalGardenTaps: 0,           // lifetime garden taps, drives the 20-tap combo bonus
       completions: { date: null, count: 0 }, // today's completed-task count, for daily bonuses
       dailyBonusesGiven: { date: null, first: false, streak3: false, perfectDay: false },
-      boosters: { clickPower: 0, autoSparkles: 0 }, // levels purchased for each booster
+      boosters: { clickPower: 0, autoSparkles: 0, luckyCharm: 0 }, // levels purchased for each booster
+      lastSeenAt: null, // timestamp used to compute offline gains on return
     };
   }
 
@@ -203,6 +205,14 @@
     buyEggBtn: $('#buy-egg-btn'),
     sparklePerSec: $('#sparkle-per-sec'),
     boosterRows: $$('.booster-row'),
+    clickPowerHint: $('#click-power-hint'),
+    headerCollectionCount: $('#header-collection-count'),
+    headerCollectionTotal: $('#header-collection-total'),
+    perfectDayBanner: $('#perfect-day-banner'),
+    dailyBonusStatus: $('#daily-bonus-status'),
+    offlineGainsRate: $('#offline-gains-rate'),
+    toastContainer: $('#toast-container'),
+    tabBtns: $$('.tab-btn'),
 
     statTotalTasks: $('#stat-total-tasks'),
     statBestStreak: $('#stat-best-streak'),
@@ -577,12 +587,37 @@
       li.querySelector('.task-text').textContent = task.text;
       el.taskList.appendChild(li);
     });
+
+    renderPerfectDayBanner();
+    renderDailyBonusCard();
+  }
+
+  function renderPerfectDayBanner() {
+    const today = todayStr();
+    const alreadyClaimedToday = state.dailyBonusesGiven.date === today && state.dailyBonusesGiven.perfectDay;
+    const hasTasks = state.tasks.length > 0;
+    const allDone = hasTasks && state.tasks.every((t) => t.done);
+    el.perfectDayBanner.classList.toggle('hidden', !hasTasks || alreadyClaimedToday || allDone);
+  }
+
+  function renderDailyBonusCard() {
+    const today = todayStr();
+    const claimed = state.dailyBonusesGiven.date === today && state.dailyBonusesGiven.first;
+    el.dailyBonusStatus.textContent = claimed ? 'Claimed today! ✅' : 'Complete a quest to claim +3 ✨';
+    el.dailyBonusStatus.classList.toggle('claimed', claimed);
+  }
+
+  function renderOfflineGainsCard() {
+    const rate = state.boosters.autoSparkles;
+    el.offlineGainsRate.textContent = rate > 0 ? `+${rate * 3600} / hr` : 'Get Busy Bees to earn while away!';
   }
 
   function renderCollectionPreview() {
     const owned = Object.keys(state.collection).filter((k) => state.collection[k]);
     el.collectionCount.textContent = owned.length;
     el.collectionTotal.textContent = PETS.length;
+    el.headerCollectionCount.textContent = owned.length;
+    el.headerCollectionTotal.textContent = PETS.length;
 
     el.petPreviewGrid.innerHTML = '';
     PETS.slice(0, 12).forEach((pet) => {
@@ -606,18 +641,26 @@
     return Math.round(cfg.baseCost * Math.pow(cfg.growth, level));
   }
 
+  function boosterEffectText(id, level) {
+    if (id === 'clickPower') return `+${level} sparkle${level === 1 ? '' : 's'} per tap`;
+    if (id === 'autoSparkles') return `+${level} sparkle${level === 1 ? '' : 's'} per second`;
+    if (id === 'luckyCharm') return `+${level * 2}% lucky chance`;
+    return '';
+  }
+
   function renderBoosters() {
     el.boosterRows.forEach((row) => {
       const id = row.dataset.booster;
-      const cfg = BOOSTERS[id];
       const level = state.boosters[id];
       const cost = boosterCost(id);
       row.querySelector('.booster-level').textContent = `Lv. ${level}`;
-      row.querySelector('.booster-effect').textContent = `+${level} sparkle${level === 1 ? '' : 's'} ${cfg.effectLabel.replace(/^sparkle /, '')}`;
+      row.querySelector('.booster-effect').textContent = boosterEffectText(id, level);
       const btn = row.querySelector('.booster-buy-btn');
       btn.textContent = `${cost} ✨`;
       btn.disabled = state.sparkles < cost;
     });
+    el.clickPowerHint.textContent = 1 + state.boosters.clickPower;
+    renderOfflineGainsCard();
   }
 
   function buyBooster(id, btnNode) {
@@ -927,9 +970,10 @@
 
     let gain = 1 + state.boosters.clickPower;
     let isLucky = false;
-    if (Math.random() < 0.12) {
+    const luckyChance = Math.min(0.12 + state.boosters.luckyCharm * 0.02, 0.5);
+    if (Math.random() < luckyChance) {
       isLucky = true;
-      gain += 2 + Math.floor(Math.random() * 3); // +2-4 on top of base
+      gain += 2 + state.boosters.luckyCharm + Math.floor(Math.random() * 3); // +2-4 on top of base, boosted by Lucky Charm
     }
 
     const isCombo = state.totalGardenTaps % 20 === 0;
@@ -1154,6 +1198,20 @@
     renderStats();
   });
 
+  el.tabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      el.tabBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.scroll;
+      if (target === 'top') {
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      } else {
+        const section = document.getElementById(target);
+        if (section) section.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+    });
+  });
+
   $$('[data-close]').forEach((btn) => {
     btn.addEventListener('click', () => {
       closeModal(document.getElementById(btn.dataset.close));
@@ -1188,7 +1246,8 @@
   }
 
   function tickAutoSparkles() {
-    if (state.boosters.autoSparkles <= 0) return;
+    state.lastSeenAt = Date.now(); // heartbeat, used to measure time away for offline gains
+    if (state.boosters.autoSparkles <= 0) { saveState(); return; }
     state.sparkles += state.boosters.autoSparkles;
     saveState();
     renderStats();
@@ -1196,8 +1255,37 @@
     renderBoosters();
   }
 
+  function showToast(message, opts = {}) {
+    const node = document.createElement('div');
+    node.className = 'toast';
+    node.textContent = message;
+    el.toastContainer.appendChild(node);
+    requestAnimationFrame(() => node.classList.add('show'));
+    setTimeout(() => {
+      node.classList.remove('show');
+      setTimeout(() => node.remove(), 400);
+    }, opts.duration || 4500);
+  }
+
+  function computeOfflineGains() {
+    const now = Date.now();
+    if (state.lastSeenAt && state.boosters.autoSparkles > 0) {
+      const elapsedMs = now - state.lastSeenAt;
+      const cappedMs = Math.min(elapsedMs, 8 * 60 * 60 * 1000); // cap at 8 hours away
+      const elapsedSec = Math.floor(cappedMs / 1000);
+      const gained = elapsedSec * state.boosters.autoSparkles;
+      if (gained > 0) {
+        state.sparkles += gained;
+        showToast(`🌙 Welcome back! Your garden earned +${gained} ✨ while you were away`);
+      }
+    }
+    state.lastSeenAt = now;
+    saveState();
+  }
+
   function init() {
     checkStreakBreak();
+    computeOfflineGains();
     renderAll();
     rotateTip();
     setInterval(rotateTip, 12000);

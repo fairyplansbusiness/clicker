@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Bloom Quest 🌸 — Tiny Garden Task Clicker</title>
+<title>Bloom Quest 🌸 — Cozy Garden Study Club</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,7 @@
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
 
 <!-- ============================================================
      Hand-drawn SVG icon library for garden decorations only — plant,
@@ -94,7 +95,6 @@
     <circle cx="45" cy="24" r="6" fill="#ffb8d9"/>
   </symbol>
 
-
 </defs>
 </svg>
 
@@ -104,7 +104,10 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-emoji">🌸</span>
-      <h1>Bloom Quest</h1>
+      <div class="brand-text">
+        <h1>Bloom Quest</h1>
+        <p class="brand-sub">Cozy Garden Study Club</p>
+      </div>
     </div>
 
     <div class="stat-pill sparkles" title="Sparkles">
@@ -114,7 +117,7 @@
     </div>
 
     <div class="stat-pill level" title="Garden Level">
-      <span class="stat-emoji">🌟</span>
+      <span class="stat-emoji">🌱</span>
       <div class="level-info">
         <span id="level-count">Lv. 1</span>
         <span id="level-title" class="level-title">Tiny Sprout</span>
@@ -129,16 +132,48 @@
       <span id="streak-count">0</span>
     </div>
 
+    <div class="stat-pill friends" title="Garden Friends collected">
+      <span class="stat-emoji">🌟</span>
+      <span id="header-collection-count">0</span><span class="stat-divider">/</span><span id="header-collection-total">24</span>
+    </div>
+
     <button id="mute-btn" class="icon-btn" title="Toggle sound" aria-label="Toggle sound" aria-pressed="false">🔊</button>
   </header>
 
-  <p id="mood-banner" class="mood-banner"></p>
+  <!-- MAIN 3-COLUMN ROOM LAYOUT -->
+  <main class="room-grid">
 
-  <!-- MAIN GRID -->
-  <main class="grid">
+    <!-- TASKS COLUMN -->
+    <section id="tasks-panel" class="panel tasks-panel">
+      <h2 class="panel-title">Today's Quests</h2>
 
-    <!-- GARDEN / MASCOT COLUMN -->
-    <section class="panel garden-panel">
+      <form id="add-task-form" class="add-task-form">
+        <input id="task-input" type="text" placeholder="Add a tiny quest... (e.g. reply to email 💌)" maxlength="80" autocomplete="off" />
+        <div class="difficulty-select">
+          <button type="button" class="diff-btn active" data-diff="small" title="Small quest — 5-10 min">🌱 Small</button>
+          <button type="button" class="diff-btn" data-diff="medium" title="Medium quest — ~30 min">🌿 Medium</button>
+          <button type="button" class="diff-btn" data-diff="large" title="Big quest — 1hr+">🌳 Big</button>
+        </div>
+        <button type="submit" class="add-btn">Add Quest ➕</button>
+      </form>
+
+      <ul id="task-list" class="task-list"></ul>
+
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-emoji">🌼</div>
+        <p>No quests yet! Add one above to start your adventure~</p>
+      </div>
+
+      <div id="perfect-day-banner" class="perfect-day-banner hidden">
+        <span>Complete all quests for a bonus!</span>
+        <span class="perfect-day-reward">🌟 +15 ✨</span>
+      </div>
+
+      <p id="daily-tip" class="daily-tip"></p>
+    </section>
+
+    <!-- ROOM / GARDEN COLUMN -->
+    <section id="room-panel" class="panel room-panel">
       <div class="garden-panel-head">
         <h2 class="panel-title">Your Garden</h2>
         <span id="mood-chip" class="mood-chip"></span>
@@ -151,14 +186,16 @@
         <div id="pet-speech" class="pet-speech hidden" role="status"></div>
         <div id="garden-fx-layer" class="garden-fx-layer" aria-hidden="true"></div>
       </div>
-      <button id="garden-click-area" class="garden-click-hint">
-        Tap your garden for a sparkle! ✨
+
+      <button id="garden-click-area" class="focus-tap-btn">
+        <span class="focus-tap-label">Tap for a Sparkle!</span>
+        <span class="focus-tap-sub">+<span id="click-power-hint">1</span> per tap ✨</span>
       </button>
 
       <div class="focus-widget">
         <h3 class="focus-title">🍅 Focus Timer</h3>
         <div id="focus-idle" class="focus-idle">
-          <p id="focus-selection-label" class="focus-selection-label">Tap 🍅 on a quest below to select it for a focus sprint~</p>
+          <p id="focus-selection-label" class="focus-selection-label">Tap 🍅 on a quest to select it for a focus sprint~</p>
           <div class="focus-buttons">
             <button class="focus-len-btn" data-min="5" aria-label="Start a 5 minute focus sprint">5 min</button>
             <button class="focus-len-btn" data-min="10" aria-label="Start a 10 minute focus sprint">10 min</button>
@@ -180,70 +217,27 @@
       </div>
     </section>
 
-    <!-- QUEST LIST COLUMN -->
-    <section class="panel quest-panel">
-      <h2 class="panel-title">Today's Quests</h2>
-
-      <form id="add-task-form" class="add-task-form">
-        <input id="task-input" type="text" placeholder="Add a tiny quest... (e.g. reply to email 💌)" maxlength="80" autocomplete="off" />
-        <div class="difficulty-select">
-          <button type="button" class="diff-btn active" data-diff="small" title="Small quest — 5-10 min">🌱 Small</button>
-          <button type="button" class="diff-btn" data-diff="medium" title="Medium quest — ~30 min">🌿 Medium</button>
-          <button type="button" class="diff-btn" data-diff="large" title="Big quest — 1hr+">🌳 Big</button>
-        </div>
-        <button type="submit" class="add-btn">Add Quest ➕</button>
-      </form>
-
-      <ul id="task-list" class="task-list"></ul>
-
-      <div id="empty-state" class="empty-state hidden">
-        <div class="empty-emoji">🌼</div>
-        <p>No quests yet! Add one above to start your adventure~</p>
+    <!-- BONUS / FRIENDS COLUMN -->
+    <section id="bonus-panel" class="panel bonus-panel">
+      <div class="bonus-card">
+        <h3 class="bonus-title">🎁 Daily Bonus</h3>
+        <p id="daily-bonus-status" class="daily-bonus-status">Complete a quest to claim!</p>
       </div>
 
-      <p id="daily-tip" class="daily-tip"></p>
-    </section>
-
-    <!-- COLLECTION / SHOP COLUMN -->
-    <section class="panel side-panel">
-      <h2 class="panel-title">Garden Friends</h2>
-      <p class="side-sub"><span id="collection-count">0</span> / <span id="collection-total">24</span> collected</p>
-
-      <div id="pet-preview-grid" class="pet-preview-grid"></div>
-
-      <button id="open-collection-btn" class="secondary-btn">📖 Open Collection</button>
-
-      <div class="shop-box">
-        <h3 class="shop-title">🥚 Mystery Egg</h3>
-        <p class="shop-desc">Hatch a new garden friend!</p>
-        <button id="buy-egg-btn" class="primary-btn">Open for 30 ✨</button>
+      <div class="bonus-card">
+        <h3 class="bonus-title">⏳ Offline Gains</h3>
+        <p id="offline-gains-rate" class="offline-gains-rate">Get Busy Bees to earn while away!</p>
       </div>
 
-      <div class="booster-box">
-        <h3 class="shop-title">🚀 Boosters</h3>
-        <p class="shop-desc">Spend sparkles to earn even more!</p>
-
-        <div class="booster-row" data-booster="clickPower">
-          <div class="booster-icon">🍯</div>
-          <div class="booster-info">
-            <div class="booster-name">Honey Boost <span class="booster-level">Lv. 0</span></div>
-            <div class="booster-effect">+1 sparkle per tap</div>
-          </div>
-          <button class="booster-buy-btn" data-action="buy-booster" data-booster="clickPower">15 ✨</button>
-        </div>
-
-        <div class="booster-row" data-booster="autoSparkles">
-          <div class="booster-icon">🐝</div>
-          <div class="booster-info">
-            <div class="booster-name">Busy Bees <span class="booster-level">Lv. 0</span></div>
-            <div class="booster-effect">+1 sparkle per second</div>
-          </div>
-          <button class="booster-buy-btn" data-action="buy-booster" data-booster="autoSparkles">25 ✨</button>
-        </div>
+      <div class="bonus-card">
+        <h3 class="bonus-title">🐣 Garden Friends</h3>
+        <p class="side-sub"><span id="collection-count">0</span> / <span id="collection-total">24</span> collected</p>
+        <div id="pet-preview-grid" class="pet-preview-grid"></div>
+        <button id="open-collection-btn" class="secondary-btn">📖 Open Collection</button>
       </div>
 
-      <div class="stats-box">
-        <h3 class="shop-title">📈 Stats</h3>
+      <div class="bonus-card stats-box">
+        <h3 class="bonus-title">📈 Stats</h3>
         <ul class="stats-list">
           <li>Quests completed: <span id="stat-total-tasks">0</span></li>
           <li>Best streak: <span id="stat-best-streak">0</span> 🔥</li>
@@ -253,6 +247,51 @@
     </section>
 
   </main>
+
+  <!-- UPGRADES ROW -->
+  <section id="upgrades-bar" class="upgrades-bar">
+    <h2 class="upgrades-title">🚀 Upgrades</h2>
+    <div class="upgrades-row">
+
+      <div class="booster-row upgrade-card" data-booster="clickPower">
+        <div class="booster-icon">🍯</div>
+        <div class="booster-name">Honey Boost <span class="booster-level">Lv. 0</span></div>
+        <div class="booster-effect">+1 sparkle per tap</div>
+        <button class="booster-buy-btn" data-action="buy-booster" data-booster="clickPower">15 ✨</button>
+      </div>
+
+      <div class="booster-row upgrade-card" data-booster="autoSparkles">
+        <div class="booster-icon">🐝</div>
+        <div class="booster-name">Busy Bees <span class="booster-level">Lv. 0</span></div>
+        <div class="booster-effect">+1 sparkle per second</div>
+        <button class="booster-buy-btn" data-action="buy-booster" data-booster="autoSparkles">25 ✨</button>
+      </div>
+
+      <div class="booster-row upgrade-card" data-booster="luckyCharm">
+        <div class="booster-icon">🍀</div>
+        <div class="booster-name">Lucky Charm <span class="booster-level">Lv. 0</span></div>
+        <div class="booster-effect">Better lucky taps</div>
+        <button class="booster-buy-btn" data-action="buy-booster" data-booster="luckyCharm">40 ✨</button>
+      </div>
+
+      <div class="upgrade-card egg-card">
+        <div class="booster-icon">🥚</div>
+        <div class="booster-name">Mystery Egg</div>
+        <div class="booster-effect">Hatch a garden friend!</div>
+        <button id="buy-egg-btn" class="booster-buy-btn">30 ✨</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BOTTOM TAB NAV -->
+  <nav class="bottom-tabs">
+    <button class="tab-btn active" data-scroll="top">🏠<span>Home</span></button>
+    <button class="tab-btn" data-scroll="tasks-panel">📋<span>Tasks</span></button>
+    <button class="tab-btn" data-scroll="upgrades-bar">🚀<span>Upgrades</span></button>
+    <button class="tab-btn" data-scroll="bonus-panel">🛍️<span>Shop</span></button>
+    <button class="tab-btn" data-scroll="room-panel">🌷<span>Room</span></button>
+  </nav>
 
   <footer class="footer">
     <p>made with 💗 for tiny brains doing big things</p>
