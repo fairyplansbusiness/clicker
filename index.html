@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bloom Quest 🌸 — Tiny Garden Task Clicker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-emoji">🌸</span>
+      <h1>Bloom Quest</h1>
+    </div>
+
+    <div class="stat-pill sparkles" title="Sparkles">
+      <span class="stat-emoji">✨</span>
+      <span id="sparkle-count">0</span>
+    </div>
+
+    <div class="stat-pill level" title="Garden Level">
+      <span class="stat-emoji">🌟</span>
+      <div class="level-info">
+        <span id="level-count">Lv. 1</span>
+        <span id="level-title" class="level-title">Tiny Sprout</span>
+      </div>
+      <div class="xp-bar-track">
+        <div id="xp-bar-fill" class="xp-bar-fill"></div>
+      </div>
+    </div>
+
+    <div class="stat-pill streak" title="Daily Streak">
+      <span class="stat-emoji flame">🔥</span>
+      <span id="streak-count">0</span>
+    </div>
+
+    <button id="mute-btn" class="icon-btn" title="Toggle sound">🔊</button>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="grid">
+
+    <!-- GARDEN / MASCOT COLUMN -->
+    <section class="panel garden-panel">
+      <h2 class="panel-title">Your Garden</h2>
+      <div id="garden-stage" class="garden-stage">
+        <div id="garden-plant" class="garden-plant">🌱</div>
+        <div id="garden-pet" class="garden-pet">🐣</div>
+        <div class="garden-ground"></div>
+      </div>
+      <button id="garden-click-area" class="garden-click-hint">
+        Tap your garden for a sparkle! ✨
+      </button>
+
+      <div class="focus-widget">
+        <h3 class="focus-title">🍅 Focus Timer</h3>
+        <div id="focus-idle" class="focus-idle">
+          <p class="focus-hint">Pick a quest below, then start a focus sprint for bonus sparkles!</p>
+          <div class="focus-buttons">
+            <button class="focus-len-btn" data-min="5">5 min</button>
+            <button class="focus-len-btn" data-min="10">10 min</button>
+            <button class="focus-len-btn" data-min="25">25 min</button>
+          </div>
+        </div>
+        <div id="focus-active" class="focus-active hidden">
+          <p id="focus-task-label" class="focus-task-label">Focusing on: —</p>
+          <div id="focus-time" class="focus-time">10:00</div>
+          <div class="focus-ring-wrap">
+            <svg class="focus-ring" viewBox="0 0 100 100">
+              <circle class="focus-ring-bg" cx="50" cy="50" r="45"></circle>
+              <circle id="focus-ring-progress" class="focus-ring-progress" cx="50" cy="50" r="45"></circle>
+            </svg>
+            <span class="focus-ring-emoji">🌷</span>
+          </div>
+          <button id="focus-cancel-btn" class="ghost-btn">Cancel sprint</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUEST LIST COLUMN -->
+    <section class="panel quest-panel">
+      <h2 class="panel-title">Today's Quests</h2>
+
+      <form id="add-task-form" class="add-task-form">
+        <input id="task-input" type="text" placeholder="Add a tiny quest... (e.g. reply to email 💌)" maxlength="80" autocomplete="off" />
+        <div class="difficulty-select">
+          <button type="button" class="diff-btn active" data-diff="small" title="Small quest — 5-10 min">🌱 Small</button>
+          <button type="button" class="diff-btn" data-diff="medium" title="Medium quest — ~30 min">🌿 Medium</button>
+          <button type="button" class="diff-btn" data-diff="large" title="Big quest — 1hr+">🌳 Big</button>
+        </div>
+        <button type="submit" class="add-btn">Add Quest ➕</button>
+      </form>
+
+      <ul id="task-list" class="task-list"></ul>
+
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-emoji">🌼</div>
+        <p>No quests yet! Add one above to start your adventure~</p>
+      </div>
+
+      <p id="daily-tip" class="daily-tip"></p>
+    </section>
+
+    <!-- COLLECTION / SHOP COLUMN -->
+    <section class="panel side-panel">
+      <h2 class="panel-title">Garden Friends</h2>
+      <p class="side-sub"><span id="collection-count">0</span> / <span id="collection-total">24</span> collected</p>
+
+      <div id="pet-preview-grid" class="pet-preview-grid"></div>
+
+      <button id="open-collection-btn" class="secondary-btn">📖 Open Collection</button>
+
+      <div class="shop-box">
+        <h3 class="shop-title">🥚 Mystery Egg</h3>
+        <p class="shop-desc">Hatch a new garden friend!</p>
+        <button id="buy-egg-btn" class="primary-btn">Open for 30 ✨</button>
+      </div>
+
+      <div class="stats-box">
+        <h3 class="shop-title">📈 Stats</h3>
+        <ul class="stats-list">
+          <li>Quests completed: <span id="stat-total-tasks">0</span></li>
+          <li>Best streak: <span id="stat-best-streak">0</span> 🔥</li>
+          <li>Eggs hatched: <span id="stat-eggs">0</span></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>made with 💗 for tiny brains doing big things</p>
+  </footer>
+</div>
+
+<!-- LEVEL UP MODAL -->
+<div id="levelup-modal" class="modal-overlay hidden">
+  <div class="modal levelup-modal">
+    <div class="modal-emoji-burst">🎉🌟🎉</div>
+    <h2>Level Up!</h2>
+    <p>Your garden grew! You're now</p>
+    <p class="levelup-new-level">Lv. <span id="levelup-level-num">2</span> — <span id="levelup-title-text">Sprout</span></p>
+    <button class="primary-btn modal-close-btn" data-close="levelup-modal">Yay! ✨</button>
+  </div>
+</div>
+
+<!-- EGG REVEAL MODAL -->
+<div id="egg-modal" class="modal-overlay hidden">
+  <div class="modal egg-modal">
+    <div id="egg-stage-shaking" class="egg-stage">
+      <div class="egg-emoji" id="egg-emoji">🥚</div>
+      <p class="egg-hint">shake shake...</p>
+    </div>
+    <div id="egg-stage-reveal" class="egg-reveal hidden">
+      <div id="egg-reveal-rarity" class="egg-reveal-rarity">Common</div>
+      <div id="egg-reveal-emoji" class="egg-reveal-emoji">🐣</div>
+      <div id="egg-reveal-name" class="egg-reveal-name">New Friend!</div>
+      <p id="egg-reveal-dup" class="egg-reveal-dup hidden">Already had this one — converted to <span id="egg-dup-refund">15</span> ✨ instead!</p>
+      <button class="primary-btn modal-close-btn" data-close="egg-modal">Sweet! 💗</button>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTION MODAL -->
+<div id="collection-modal" class="modal-overlay hidden">
+  <div class="modal collection-modal">
+    <button class="modal-x" data-close="collection-modal">✕</button>
+    <h2>📖 Garden Friends Collection</h2>
+    <div id="collection-grid" class="collection-grid"></div>
+  </div>
+</div>
+
+<!-- FOCUS COMPLETE MODAL -->
+<div id="focus-complete-modal" class="modal-overlay hidden">
+  <div class="modal focus-complete-modal">
+    <div class="modal-emoji-burst">⏰🌷⏰</div>
+    <h2>Sprint Complete!</h2>
+    <p>Did you finish your quest? Mark it done below for a <strong>bonus x1.5 sparkles</strong>!</p>
+    <button class="primary-btn modal-close-btn" data-close="focus-complete-modal">Got it! 💪</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
