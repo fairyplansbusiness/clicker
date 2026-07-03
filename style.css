@@ -287,19 +287,21 @@ button {
 .deco.unlocked { opacity: 1; transform: scale(1); }
 .deco.just-unlocked { animation: deco-pop 0.6s cubic-bezier(.34,1.56,.64,1); }
 
-.deco-flowerpatch { left: 6%; bottom: 32px; width: 90px; height: 36px; }
-.deco-fence       { left: 0; right: 0; bottom: 30px; width: 100%; height: 40px; opacity: 0; }
+/* Ground decorations are laned to stay clear of the pet (~left:20%) and the
+   plant (centered at left:50%), so nothing overlaps or crosses the plant. */
+.deco-fence        { left: 0; bottom: 0; width: 34%; height: 16px; opacity: 0; }
 .deco-fence.unlocked { opacity: 0.85; }
+.deco-flowerpatch  { left: 1%; bottom: 30px; width: 66px; height: 28px; }
+.deco-sign         { left: 30%; bottom: 30px; width: 32px; height: 38px; }
+.deco-wateringcan  { left: 37%; bottom: 32px; width: 36px; height: 28px; }
+.deco-rug          { left: 61%; bottom: 30px; width: 66px; height: 32px; }
+.deco-petbed       { left: 76%; bottom: 30px; width: 48px; height: 26px; }
+.deco-mushroomtable{ right: 2%; bottom: 30px; width: 58px; height: 40px; }
+
 .deco-cloud-1      { top: 10px; left: 8%; width: 60px; height: 30px; animation: drift 30s linear infinite; }
 .deco-cloud-2      { top: 26px; right: 10%; width: 46px; height: 22px; animation: drift 22s linear infinite reverse; }
-.deco-butterfly    { top: 50px; right: 20%; width: 34px; height: 28px; animation: flutter 5s ease-in-out infinite; }
-.deco-mushroomtable{ right: 8%; bottom: 30px; width: 70px; height: 48px; }
+.deco-butterfly    { top: 56px; right: 32%; width: 30px; height: 24px; animation: flutter 5s ease-in-out infinite; }
 .deco-fairylights  { top: 0; left: 0; right: 0; width: 100%; height: 24px; }
-.deco-rug          { left: 50%; bottom: 30px; width: 84px; height: 40px; transform: translateX(-50%) scale(0.6); }
-.deco.deco-rug.unlocked { transform: translateX(-50%) scale(1); }
-.deco-sign         { left: 4%; bottom: 30px; width: 40px; height: 46px; }
-.deco-wateringcan  { right: 6%; bottom: 34px; width: 44px; height: 34px; }
-.deco-petbed       { left: 62%; bottom: 30px; width: 62px; height: 32px; }
 
 .garden-click-hint {
   width: 100%;
@@ -567,7 +569,7 @@ button {
 }
 .secondary-btn:hover { transform: translateY(-2px); }
 
-.shop-box, .stats-box {
+.shop-box, .stats-box, .booster-box {
   background: #fbf6ff;
   border-radius: 16px;
   padding: 14px;
@@ -575,6 +577,39 @@ button {
 }
 .shop-title { font-size: 15px; margin-bottom: 4px; color: var(--pink-deep); }
 .shop-desc { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 10px; }
+
+.booster-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+}
+.booster-row:last-child { margin-bottom: 0; }
+.booster-icon { font-size: 24px; flex-shrink: 0; }
+.booster-info { flex: 1; min-width: 0; }
+.booster-name { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.booster-level { font-size: 10.5px; font-weight: 700; color: var(--mint-deep); background: #e7f7ee; padding: 1px 7px; border-radius: 999px; }
+.booster-effect { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+.booster-buy-btn {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+  color: #1f4d3c;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  min-height: 40px;
+  transition: transform 0.12s ease;
+}
+.booster-buy-btn:hover { transform: translateY(-2px); }
+.booster-buy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.booster-row.maxed .booster-buy-btn { background: #eee; color: var(--ink-soft); }
+
+.sparkle-per-sec { font-size: 10.5px; font-weight: 700; color: var(--mint-deep); margin-left: 2px; }
 .primary-btn {
   width: 100%;
   background: linear-gradient(135deg, var(--sun-deep), var(--pink));

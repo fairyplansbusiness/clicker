@@ -54,6 +54,12 @@
   const RARITY_REFUND = { common: 8, rare: 15, epic: 25, legendary: 40 };
   const EGG_COST = 30;
 
+  // Boosters: repeatable upgrades bought with sparkles. Cost grows each level.
+  const BOOSTERS = {
+    clickPower:   { name: 'Honey Boost', emoji: '🍯', effectLabel: 'sparkle per tap',    baseCost: 15, growth: 1.18 },
+    autoSparkles: { name: 'Busy Bees',   emoji: '🐝', effectLabel: 'sparkle per second', baseCost: 25, growth: 1.22 },
+  };
+
   const TIPS = [
     'Tiny steps still count! 🐾',
     "Break it down — smaller quests = quicker wins!",
@@ -124,6 +130,7 @@
       totalGardenTaps: 0,           // lifetime garden taps, drives the 20-tap combo bonus
       completions: { date: null, count: 0 }, // today's completed-task count, for daily bonuses
       dailyBonusesGiven: { date: null, first: false, streak3: false, perfectDay: false },
+      boosters: { clickPower: 0, autoSparkles: 0 }, // levels purchased for each booster
     };
   }
 
@@ -194,6 +201,8 @@
     petPreviewGrid: $('#pet-preview-grid'),
     openCollectionBtn: $('#open-collection-btn'),
     buyEggBtn: $('#buy-egg-btn'),
+    sparklePerSec: $('#sparkle-per-sec'),
+    boosterRows: $$('.booster-row'),
 
     statTotalTasks: $('#stat-total-tasks'),
     statBestStreak: $('#stat-best-streak'),
@@ -456,6 +465,7 @@
     renderTasks();
     renderCollectionPreview();
     renderShop();
+    renderBoosters();
     renderFocus();
   }
 
@@ -472,6 +482,13 @@
     el.statTotalTasks.textContent = state.totalTasksCompleted;
     el.statBestStreak.textContent = state.bestStreak;
     el.statEggs.textContent = state.eggsHatched;
+
+    if (state.boosters.autoSparkles > 0) {
+      el.sparklePerSec.textContent = `+${state.boosters.autoSparkles}/s`;
+      el.sparklePerSec.classList.remove('hidden');
+    } else {
+      el.sparklePerSec.classList.add('hidden');
+    }
   }
 
   function renderMood() {
@@ -581,6 +598,43 @@
 
   function renderShop() {
     el.buyEggBtn.disabled = state.sparkles < EGG_COST;
+  }
+
+  function boosterCost(id) {
+    const cfg = BOOSTERS[id];
+    const level = state.boosters[id];
+    return Math.round(cfg.baseCost * Math.pow(cfg.growth, level));
+  }
+
+  function renderBoosters() {
+    el.boosterRows.forEach((row) => {
+      const id = row.dataset.booster;
+      const cfg = BOOSTERS[id];
+      const level = state.boosters[id];
+      const cost = boosterCost(id);
+      row.querySelector('.booster-level').textContent = `Lv. ${level}`;
+      row.querySelector('.booster-effect').textContent = `+${level} sparkle${level === 1 ? '' : 's'} ${cfg.effectLabel.replace(/^sparkle /, '')}`;
+      const btn = row.querySelector('.booster-buy-btn');
+      btn.textContent = `${cost} ✨`;
+      btn.disabled = state.sparkles < cost;
+    });
+  }
+
+  function buyBooster(id, btnNode) {
+    const cost = boosterCost(id);
+    if (state.sparkles < cost) return;
+    state.sparkles -= cost;
+    state.boosters[id] += 1;
+    saveState();
+    renderStats();
+    renderShop();
+    renderBoosters();
+    playPop();
+    if (btnNode) {
+      const { x, y } = elCenter(btnNode);
+      spawnConfetti(x, y, 14, ['#a8e6cf', '#6fd6b3']);
+      spawnFloatingText(x, y - 10, `${BOOSTERS[id].emoji} Lv. ${state.boosters[id]}!`);
+    }
   }
 
   function renderFocus() {
@@ -871,11 +925,11 @@
     const tapX = (e && e.clientX) ? e.clientX : rect.left + rect.width / 2;
     const tapY = (e && e.clientY) ? e.clientY : rect.top + rect.height / 2;
 
-    let gain = 1;
+    let gain = 1 + state.boosters.clickPower;
     let isLucky = false;
     if (Math.random() < 0.12) {
       isLucky = true;
-      gain = 3 + Math.floor(Math.random() * 3); // 3-5
+      gain += 2 + Math.floor(Math.random() * 3); // +2-4 on top of base
     }
 
     const isCombo = state.totalGardenTaps % 20 === 0;
@@ -1089,6 +1143,11 @@
 
   el.buyEggBtn.addEventListener('click', buyEgg);
 
+  el.boosterRows.forEach((row) => {
+    const btn = row.querySelector('.booster-buy-btn');
+    btn.addEventListener('click', () => buyBooster(row.dataset.booster, btn));
+  });
+
   el.muteBtn.addEventListener('click', () => {
     state.muted = !state.muted;
     saveState();
@@ -1128,11 +1187,21 @@
     }
   }
 
+  function tickAutoSparkles() {
+    if (state.boosters.autoSparkles <= 0) return;
+    state.sparkles += state.boosters.autoSparkles;
+    saveState();
+    renderStats();
+    renderShop();
+    renderBoosters();
+  }
+
   function init() {
     checkStreakBreak();
     renderAll();
     rotateTip();
     setInterval(rotateTip, 12000);
+    setInterval(tickAutoSparkles, 1000);
     if (!prefersReducedMotion) scheduleAmbientPetSpeech();
 
     // resume an in-progress focus timer across reloads

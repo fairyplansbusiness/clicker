@@ -110,6 +110,7 @@
     <div class="stat-pill sparkles" title="Sparkles">
       <span class="stat-emoji">✨</span>
       <span id="sparkle-count">0</span>
+      <span id="sparkle-per-sec" class="sparkle-per-sec hidden"></span>
     </div>
 
     <div class="stat-pill level" title="Garden Level">
@@ -216,6 +217,29 @@
         <h3 class="shop-title">🥚 Mystery Egg</h3>
         <p class="shop-desc">Hatch a new garden friend!</p>
         <button id="buy-egg-btn" class="primary-btn">Open for 30 ✨</button>
+      </div>
+
+      <div class="booster-box">
+        <h3 class="shop-title">🚀 Boosters</h3>
+        <p class="shop-desc">Spend sparkles to earn even more!</p>
+
+        <div class="booster-row" data-booster="clickPower">
+          <div class="booster-icon">🍯</div>
+          <div class="booster-info">
+            <div class="booster-name">Honey Boost <span class="booster-level">Lv. 0</span></div>
+            <div class="booster-effect">+1 sparkle per tap</div>
+          </div>
+          <button class="booster-buy-btn" data-action="buy-booster" data-booster="clickPower">15 ✨</button>
+        </div>
+
+        <div class="booster-row" data-booster="autoSparkles">
+          <div class="booster-icon">🐝</div>
+          <div class="booster-info">
+            <div class="booster-name">Busy Bees <span class="booster-level">Lv. 0</span></div>
+            <div class="booster-effect">+1 sparkle per second</div>
+          </div>
+          <button class="booster-buy-btn" data-action="buy-booster" data-booster="autoSparkles">25 ✨</button>
+        </div>
       </div>
 
       <div class="stats-box">
