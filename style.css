@@ -48,15 +48,6 @@ button {
 .topbar { padding-top: max(14px, env(safe-area-inset-top)); }
 .footer { padding-bottom: max(4px, env(safe-area-inset-bottom)); }
 
-/* ---------- Icon system (hand-drawn SVG, replaces most emoji) ---------- */
-.icon-sparkle { width: 18px; height: 18px; color: var(--sun-deep); flex-shrink: 0; }
-.icon-inline { width: 14px; height: 14px; display: inline-block; vertical-align: -2px; margin-left: 2px; }
-.stat-icon { width: 18px; height: 18px; }
-.icon-empty-pot { width: 84px; height: 78px; }
-.icon-egg-mini { width: 18px; height: 22px; vertical-align: -5px; margin-right: 2px; }
-.icon-egg { width: 90px; height: 108px; }
-.icon-focus-bloom { width: 30px; height: 30px; }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -225,26 +216,21 @@ button {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: 108px;
-  height: 126px;
-  transition: width 0.4s ease, height 0.4s ease;
+  font-size: 64px;
+  transition: font-size 0.4s ease;
   animation: sway 4s ease-in-out infinite;
   filter: drop-shadow(0 6px 6px rgba(0,0,0,0.08));
   transform-origin: bottom center;
 }
-.garden-plant .plant-art { width: 100%; height: 100%; overflow: visible; }
 
 .garden-pet {
   position: absolute;
   bottom: 30px;
   left: 20%;
-  width: 56px;
-  height: 56px;
+  font-size: 34px;
   animation: bob 2.6s ease-in-out infinite;
   cursor: pointer;
 }
-.garden-pet .pet-art { width: 100%; height: 100%; overflow: visible; }
-.garden-pet .pet-art .pet-eyes { animation: blink 4.2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
 
 .pet-speech {
   position: absolute;
@@ -260,9 +246,27 @@ button {
   animation: bubble-in 0.25s cubic-bezier(.34,1.56,.64,1);
   pointer-events: none;
 }
-.pet-speech-inner { position: relative; padding: 8px 10px 12px; }
-.pet-speech svg.bubble-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
-.pet-speech span { position: relative; }
+.pet-speech-inner {
+  position: relative;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #f0dff2;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.pet-speech-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-right: 2px solid #f0dff2;
+  border-bottom: 2px solid #f0dff2;
+  transform: rotate(45deg);
+  border-radius: 0 0 3px 0;
+}
 
 .garden-fx-layer {
   position: absolute;
@@ -387,11 +391,11 @@ button {
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1s linear;
 }
-.icon-focus-bloom {
+.focus-ring-emoji {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  color: #ff9ec4;
+  font-size: 28px;
 }
 .ghost-btn {
   background: transparent;
@@ -504,7 +508,6 @@ button {
 .task-text { font-weight: 600; font-size: 14.5px; word-break: break-word; }
 .task-meta { font-size: 11px; color: var(--ink-soft); display: flex; gap: 6px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
 .task-diff-badge { padding: 1px 7px; border-radius: 999px; background: #f4eefc; }
-.task-meta .icon-sparkle { width: 11px; height: 11px; vertical-align: -1px; }
 
 .task-actions { display: flex; gap: 4px; }
 .task-focus-btn, .task-del-btn {
@@ -519,6 +522,7 @@ button {
 .task-del-btn:hover { background: #ffd9d9; transform: scale(1.08); }
 
 .empty-state { text-align: center; padding: 30px 10px; color: var(--ink-soft); }
+.empty-emoji { font-size: 40px; margin-bottom: 8px; animation: bob 3s ease-in-out infinite; }
 
 .daily-tip {
   margin-top: 14px;
@@ -544,12 +548,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  font-size: 18px;
 }
-.pet-slot .pet-art { width: 100%; height: 100%; }
 .pet-slot.locked { opacity: 0.35; filter: grayscale(1); }
-.pet-slot.locked .pet-art { display: none; }
-.pet-slot.locked::after { content: '❔'; font-size: 16px; color: var(--ink-soft); }
 .pet-slot.rare-glow { background: linear-gradient(135deg, #fff2c9, #ffe6a3); }
 .pet-slot.epic-glow { background: linear-gradient(135deg, #e6d6ff, #d3b8ff); }
 .pet-slot.legendary-glow { background: linear-gradient(135deg, #ffd9ec, #ffb8d9); box-shadow: 0 0 8px rgba(255,150,200,0.7); }
@@ -630,7 +631,7 @@ button {
 .levelup-new-level { font-family: 'Baloo 2', cursive; font-size: 20px; color: var(--lilac-deep); margin: 8px 0 4px; }
 
 .egg-stage { padding: 10px 0 6px; }
-#egg-stage-shaking .icon-egg { animation: egg-shake 0.5s ease-in-out infinite; }
+.egg-emoji { font-size: 70px; animation: egg-shake 0.5s ease-in-out infinite; }
 .egg-hint { color: var(--ink-soft); font-size: 13px; margin-top: 8px; }
 
 .egg-reveal-rarity {
@@ -650,8 +651,7 @@ button {
 .egg-reveal-rarity.epic { background: #e6d6ff; color: #7433c9; }
 .egg-reveal-rarity.legendary { background: linear-gradient(135deg, #ffd9ec, #ffe9b0); color: #c9457c; box-shadow: 0 0 12px rgba(255,150,200,0.6); }
 
-.egg-reveal-emoji { margin-bottom: 6px; animation: pop-in 0.5s cubic-bezier(.34,1.56,.64,1); }
-.egg-reveal-emoji .pet-art { width: 100px; height: 100px; }
+.egg-reveal-emoji { font-size: 80px; margin-bottom: 6px; animation: pop-in 0.5s cubic-bezier(.34,1.56,.64,1); }
 .egg-reveal-name { font-family: 'Baloo 2', cursive; font-size: 20px; color: var(--ink); margin-bottom: 10px; }
 .egg-reveal-dup { font-size: 12.5px; color: var(--ink-soft); background: #f5f0ff; padding: 8px; border-radius: 10px; }
 
@@ -670,7 +670,7 @@ button {
   box-shadow: var(--shadow-sm);
 }
 .collection-card.locked { opacity: 0.4; filter: grayscale(1); }
-.collection-card .c-emoji { width: 44px; height: 44px; margin: 0 auto; }
+.collection-card .c-emoji { font-size: 30px; }
 .collection-card .c-name { font-size: 11px; font-weight: 700; margin-top: 4px; }
 .collection-card .c-rarity { font-size: 9px; text-transform: uppercase; color: var(--ink-soft); }
 
@@ -775,15 +775,6 @@ button {
   15% { opacity: 1; transform: translate(-50%, -6px) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -46px) scale(1); }
 }
-@keyframes modal-sparkle-1 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-6px) rotate(-10deg); } }
-@keyframes modal-sparkle-2 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(10deg); } }
-
-.modal-sparkle-burst { display: flex; justify-content: center; gap: 14px; margin-bottom: 10px; }
-.modal-sparkle-burst svg { width: 26px; height: 26px; color: #ffcf5c; }
-.modal-sparkle-burst .icon-focus-bloom { width: 30px; height: 30px; position: static; transform: none; }
-.modal-sparkle-burst .burst-1 { animation: modal-sparkle-1 1.3s ease-in-out infinite; color: #ff9ec4; }
-.modal-sparkle-burst .burst-2 { animation: modal-sparkle-2 1.5s ease-in-out infinite; }
-.modal-sparkle-burst .burst-3 { animation: modal-sparkle-1 1.1s ease-in-out infinite; color: #a8e6cf; }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 640px) {

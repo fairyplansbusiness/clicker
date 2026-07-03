@@ -13,7 +13,7 @@
     large:  { label: 'Big',    emoji: '🌳', sparkles: 26, xp: 34, minutes: 60 },
   };
 
-  const GARDEN_STAGES_COUNT = 8; // 0..7, drives plant SVG growth (see plantStageSVG)
+  const GARDEN_STAGES = ['🌰', '🌱', '🌿', '🪴', '🌸', '🌳', '🌺', '🌴'];
   const LEVEL_TITLES = [
     'Tiny Seed', 'Tiny Sprout', 'Budding Buddy', 'Blooming Buddy', 'Petal Pal',
     'Garden Star', 'Meadow Hero', 'Bloom Champion', 'Sparkle Guardian', 'Legendary Green Thumb'
@@ -21,33 +21,33 @@
 
   const PETS = [
     // common
-    { id: 'chick',    name: 'Chirpy',      rarity: 'common' },
-    { id: 'hamster',  name: 'Hammy',       rarity: 'common' },
-    { id: 'bunny',    name: 'Coco',        rarity: 'common' },
-    { id: 'mushroom', name: 'Shroomie',    rarity: 'common' },
-    { id: 'clover',   name: 'Lucky Leaf',  rarity: 'common' },
-    { id: 'bear',     name: 'Teddy',       rarity: 'common' },
-    { id: 'bee',      name: 'Buzzy',       rarity: 'common' },
-    { id: 'snail',    name: 'Shelly',      rarity: 'common' },
+    { id: 'chick',    name: 'Chirpy',      emoji: '🐣', rarity: 'common' },
+    { id: 'hamster',  name: 'Hammy',       emoji: '🐹', rarity: 'common' },
+    { id: 'bunny',    name: 'Coco',        emoji: '🐰', rarity: 'common' },
+    { id: 'mushroom', name: 'Shroomie',    emoji: '🍄', rarity: 'common' },
+    { id: 'clover',   name: 'Lucky Leaf',  emoji: '🍀', rarity: 'common' },
+    { id: 'bear',     name: 'Teddy',       emoji: '🧸', rarity: 'common' },
+    { id: 'bee',      name: 'Buzzy',       emoji: '🐝', rarity: 'common' },
+    { id: 'snail',    name: 'Shelly',      emoji: '🐌', rarity: 'common' },
     // rare
-    { id: 'unicorn',  name: 'Glimmer',     rarity: 'rare' },
-    { id: 'koala',    name: 'Koa',         rarity: 'rare' },
-    { id: 'fox',      name: 'Foxtail',     rarity: 'rare' },
-    { id: 'panda',    name: 'Momo',        rarity: 'rare' },
-    { id: 'donut',    name: 'Sprinkles',   rarity: 'rare' },
-    { id: 'rainbow',  name: 'Skye',        rarity: 'rare' },
+    { id: 'unicorn',  name: 'Glimmer',     emoji: '🦄', rarity: 'rare' },
+    { id: 'koala',    name: 'Koa',         emoji: '🐨', rarity: 'rare' },
+    { id: 'fox',      name: 'Foxtail',     emoji: '🦊', rarity: 'rare' },
+    { id: 'panda',    name: 'Momo',        emoji: '🐼', rarity: 'rare' },
+    { id: 'donut',    name: 'Sprinkles',   emoji: '🍩', rarity: 'rare' },
+    { id: 'rainbow',  name: 'Skye',        emoji: '🌈', rarity: 'rare' },
     // epic
-    { id: 'dragon',   name: 'Emberly',     rarity: 'epic' },
-    { id: 'fairy',    name: 'Petalwing',   rarity: 'epic' },
-    { id: 'butterfly',name: 'Flutter',     rarity: 'epic' },
-    { id: 'cake',     name: 'Frosting',    rarity: 'epic' },
+    { id: 'dragon',   name: 'Emberly',     emoji: '🐲', rarity: 'epic' },
+    { id: 'fairy',    name: 'Petalwing',   emoji: '🧚', rarity: 'epic' },
+    { id: 'butterfly',name: 'Flutter',     emoji: '🦋', rarity: 'epic' },
+    { id: 'cake',     name: 'Frosting',    emoji: '🍰', rarity: 'epic' },
     // legendary
-    { id: 'crown',    name: 'Majesty',     rarity: 'legendary' },
-    { id: 'star',     name: 'Stardust',    rarity: 'legendary' },
-    { id: 'gem',      name: 'Crystal',     rarity: 'legendary' },
-    { id: 'ribbon',   name: 'Bowbow',      rarity: 'legendary' },
-    { id: 'phoenix',  name: 'Solstice',    rarity: 'legendary' },
-    { id: 'moon',     name: 'Luna',        rarity: 'legendary' },
+    { id: 'crown',    name: 'Majesty',     emoji: '👑', rarity: 'legendary' },
+    { id: 'star',     name: 'Stardust',    emoji: '🌟', rarity: 'legendary' },
+    { id: 'gem',      name: 'Crystal',     emoji: '💎', rarity: 'legendary' },
+    { id: 'ribbon',   name: 'Bowbow',      emoji: '🎀', rarity: 'legendary' },
+    { id: 'phoenix',  name: 'Solstice',    emoji: '🕊️', rarity: 'legendary' },
+    { id: 'moon',     name: 'Luna',        emoji: '🌙', rarity: 'legendary' },
   ];
 
   const RARITY_WEIGHTS = { common: 60, rare: 25, epic: 12, legendary: 3 };
@@ -98,8 +98,6 @@
     { id: 'sleepy',     label: '☁️ Sleepy Cloud Day', message: 'Be gentle with yourself today, friend.' },
   ];
 
-  const PET_PALETTE = ['#ffb8d9', '#c6b3ff', '#a8e6cf', '#ffe08a', '#7fc9f5', '#ffcf9e', '#f6a8c0', '#b9d98a'];
-  const EAR_TYPES = ['round', 'pointy', 'long', 'wing', 'horn', 'none'];
 
   /* ============================================================
      STATE
@@ -402,139 +400,10 @@
     setTimeout(() => node.remove(), 1600);
   }
 
-  /* ============================================================
-     HAND-DRAWN SVG ART (plant growth stages + pet critters)
-     Kept intentionally simple (circles/ellipses/short paths) for
-     mobile performance — no filters, no per-frame SVG work.
-     ============================================================ */
-
-  function flowerFaceSVG(cx, cy, r = 7) {
-    return `
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff6d9"/>
-      <circle cx="${(cx - r * 0.35).toFixed(1)}" cy="${cy}" r="${(r * 0.14).toFixed(1)}" fill="#5c4a44"/>
-      <circle cx="${(cx + r * 0.35).toFixed(1)}" cy="${cy}" r="${(r * 0.14).toFixed(1)}" fill="#5c4a44"/>
-      <path d="M${(cx - r * 0.3).toFixed(1)} ${(cy + r * 0.3).toFixed(1)} q${(r * 0.3).toFixed(1)} ${(r * 0.22).toFixed(1)} ${(r * 0.6).toFixed(1)} 0" stroke="#5c4a44" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-      <ellipse cx="${(cx - r * 0.6).toFixed(1)}" cy="${(cy + r * 0.15).toFixed(1)}" rx="${(r * 0.22).toFixed(1)}" ry="${(r * 0.14).toFixed(1)}" fill="#ffb8d9" opacity=".7"/>
-      <ellipse cx="${(cx + r * 0.6).toFixed(1)}" cy="${(cy + r * 0.15).toFixed(1)}" rx="${(r * 0.22).toFixed(1)}" ry="${(r * 0.14).toFixed(1)}" fill="#ffb8d9" opacity=".7"/>
-    `;
-  }
-
-  function flowerHeadSVG(cx, cy, r) {
-    let petals = '';
-    for (let i = 0; i < 5; i++) {
-      const angle = (i / 5) * Math.PI * 2;
-      const px = (cx + Math.cos(angle) * r).toFixed(1);
-      const py = (cy + Math.sin(angle) * r).toFixed(1);
-      const deg = ((angle * 180) / Math.PI).toFixed(0);
-      petals += `<ellipse cx="${px}" cy="${py}" rx="${(r * 0.7).toFixed(1)}" ry="${(r * 0.45).toFixed(1)}" fill="#ff9ec4" transform="rotate(${deg} ${px} ${py})"/>`;
-    }
-    return petals + flowerFaceSVG(cx, cy, r * 0.55);
-  }
-
-  // stage: 0 (seed) .. 7 (grand blossoming tree)
-  function plantStageSVG(stage) {
-    stage = Math.max(0, Math.min(GARDEN_STAGES_COUNT - 1, stage));
-    const stemHeights = [0, 20, 34, 44, 50, 54, 58, 60];
-    const leafPairsByStage = [0, 1, 2, 2, 2, 1, 0, 0];
-    const stemHeight = stemHeights[stage];
-    const leafPairs = leafPairsByStage[stage];
-    const hasBud = stage === 3;
-    const hasFlower = stage === 4 || stage === 5;
-    const isTree = stage >= 6;
-
-    let parts = `<use href="#ic-pot" x="10" y="96" width="100" height="40"/>`;
-
-    if (stemHeight > 0) {
-      const stemTopY = 96 - stemHeight;
-      parts += `<path d="M60 96 V${stemTopY}" stroke="#8fcf8a" stroke-width="5" fill="none" stroke-linecap="round"/>`;
-    } else {
-      parts += `<ellipse cx="60" cy="92" rx="14" ry="5" fill="#c98a5c" opacity=".4"/><circle cx="60" cy="88" r="4" fill="#8a6a4a"/>`;
-    }
-
-    for (let i = 0; i < leafPairs; i++) {
-      const y = (96 - stemHeight * ((i + 1) / (leafPairs + 1))).toFixed(1);
-      parts += `
-        <ellipse cx="46" cy="${y}" rx="11" ry="6" fill="#a8e6cf" transform="rotate(-20 46 ${y})"/>
-        <ellipse cx="74" cy="${y}" rx="11" ry="6" fill="#a8e6cf" transform="rotate(20 74 ${y})"/>
-      `;
-    }
-
-    const topY = 96 - stemHeight;
-
-    if (hasBud) {
-      parts += `<circle cx="60" cy="${topY - 4}" r="8" fill="#ffb8d9"/>`;
-    }
-    if (hasFlower) {
-      parts += flowerHeadSVG(60, topY - 6, stage === 5 ? 14 : 11);
-    }
-    if (isTree) {
-      const canopyR = stage === 6 ? 30 : 36;
-      const canopyCy = topY - canopyR * 0.6;
-      parts += `<circle cx="60" cy="${canopyCy.toFixed(1)}" r="${canopyR}" fill="#bfe8b8"/>`;
-      const blossomCount = stage === 6 ? 5 : 8;
-      for (let i = 0; i < blossomCount; i++) {
-        const angle = (i / blossomCount) * Math.PI * 2;
-        const bx = (60 + Math.cos(angle) * canopyR * 0.65).toFixed(1);
-        const by = (canopyCy + Math.sin(angle) * canopyR * 0.65).toFixed(1);
-        parts += `<circle cx="${bx}" cy="${by}" r="4" fill="#ff9ec4"/>`;
-      }
-      parts += flowerFaceSVG(60, canopyCy, 9);
-      if (stage === 7) {
-        parts += `<use href="#ic-sparkle" x="18" y="10" width="16" height="16" fill="#ffe08a" style="color:#ffe08a"/><use href="#ic-sparkle" x="88" y="24" width="12" height="12" style="color:#ffb8d9"/>`;
-      }
-    }
-
-    return `<svg viewBox="0 0 120 140" class="plant-art" aria-hidden="true">${parts}</svg>`;
-  }
-
   function hashStr(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
     return Math.abs(h);
-  }
-
-  function petVisual(pet) {
-    const h = hashStr(pet.id);
-    const bodyColor = PET_PALETTE[h % PET_PALETTE.length];
-    const earType = EAR_TYPES[Math.floor(h / PET_PALETTE.length) % EAR_TYPES.length];
-    return { bodyColor, earType };
-  }
-
-  // Generic default critter shown before the player owns any pets.
-  const STARTER_PET = { id: 'starter-seedling', name: 'Sprout', rarity: 'common' };
-
-  function petSvgMarkup(pet) {
-    const { bodyColor, earType } = petVisual(pet);
-    const rarity = pet.rarity;
-    let ears = '';
-    if (earType === 'round') ears = `<circle cx="24" cy="20" r="9" fill="${bodyColor}"/><circle cx="56" cy="20" r="9" fill="${bodyColor}"/>`;
-    else if (earType === 'pointy') ears = `<path d="M20 24 L14 6 L30 18Z" fill="${bodyColor}"/><path d="M60 24 L66 6 L50 18Z" fill="${bodyColor}"/>`;
-    else if (earType === 'long') ears = `<ellipse cx="20" cy="10" rx="6" ry="16" fill="${bodyColor}"/><ellipse cx="60" cy="10" rx="6" ry="16" fill="${bodyColor}"/>`;
-    else if (earType === 'wing') ears = `<path d="M14 30q-14-4-10-20q14 0 16 14z" fill="${bodyColor}" opacity=".9"/><path d="M66 30q14-4 10-20q-14 0-16 14z" fill="${bodyColor}" opacity=".9"/>`;
-    else if (earType === 'horn') ears = `<path d="M40 16 L34 2 L46 2Z" fill="${bodyColor}"/>`;
-
-    const legendaryGlow = rarity === 'legendary' ? `<circle cx="40" cy="42" r="34" fill="#fff3d6" opacity=".5"/>` : '';
-    const accessory = rarity === 'epic'
-      ? `<use href="#ic-star4-mini" x="50" y="8" width="14" height="14" style="color:#ffcf5c"/>`
-      : rarity === 'legendary'
-      ? `<use href="#ic-sparkle" x="48" y="4" width="18" height="18" style="color:#ffcf5c"/>`
-      : '';
-
-    return `
-    <svg viewBox="0 0 80 80" class="pet-art" aria-hidden="true">
-      ${legendaryGlow}
-      ${ears}
-      <ellipse cx="40" cy="46" rx="26" ry="24" fill="${bodyColor}"/>
-      <ellipse cx="40" cy="50" rx="16" ry="13" fill="#fff8ef" opacity=".85"/>
-      <g class="pet-eyes">
-        <circle cx="32" cy="42" r="3" fill="#4a3b42"/>
-        <circle cx="48" cy="42" r="3" fill="#4a3b42"/>
-      </g>
-      <path d="M35 52q5 4 10 0" stroke="#4a3b42" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <ellipse cx="25" cy="50" rx="4.5" ry="3" fill="#ffb8d9" opacity=".8"/>
-      <ellipse cx="55" cy="50" rx="4.5" ry="3" fill="#ffb8d9" opacity=".8"/>
-      ${accessory}
-    </svg>`;
   }
 
   /* ============================================================
@@ -615,14 +484,14 @@
 
   function renderGardenScene() {
     // plant growth stage from level
-    const stageIdx = Math.min(Math.floor((state.level - 1) / 1.4), GARDEN_STAGES_COUNT - 1);
-    el.gardenPlant.innerHTML = plantStageSVG(stageIdx);
+    const stageIdx = Math.min(Math.floor((state.level - 1) / 1.4), GARDEN_STAGES.length - 1);
+    el.gardenPlant.textContent = GARDEN_STAGES[stageIdx];
 
-    // featured pet: newest catch if the player owns any, otherwise a default starter critter
+    // featured pet: newest catch if the player owns any, otherwise the default starter chick
     const featured = state.featuredPetId && state.collection[state.featuredPetId]
       ? PETS.find((p) => p.id === state.featuredPetId)
       : null;
-    el.gardenPet.innerHTML = petSvgMarkup(featured || STARTER_PET);
+    el.gardenPet.textContent = featured ? featured.emoji : '🐣';
 
     // decoration unlocks
     DECORATIONS.forEach((deco) => {
@@ -680,7 +549,7 @@
           <div class="task-text"></div>
           <div class="task-meta">
             <span class="task-diff-badge">${diff.emoji} ${diff.label}</span>
-            <span>+${diff.sparkles} <svg class="icon-sparkle" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkle"></use></svg></span>
+            <span>+${diff.sparkles}✨</span>
           </div>
         </div>
         <div class="task-actions">
@@ -704,7 +573,7 @@
       const div = document.createElement('div');
       const glowClass = has && pet.rarity !== 'common' ? `${pet.rarity}-glow` : '';
       div.className = `pet-slot ${has ? '' : 'locked'} ${glowClass}`.trim();
-      div.innerHTML = has ? petSvgMarkup(pet) : '';
+      div.textContent = has ? pet.emoji : '❔';
       div.title = has ? pet.name : '???';
       el.petPreviewGrid.appendChild(div);
     });
@@ -757,7 +626,7 @@
       const div = document.createElement('div');
       div.className = 'collection-card' + (has ? '' : ' locked');
       div.innerHTML = `
-        <div class="c-emoji">${has ? petSvgMarkup(pet) : ''}</div>
+        <div class="c-emoji">${has ? pet.emoji : '❔'}</div>
         <div class="c-name">${has ? pet.name : '???'}</div>
         <div class="c-rarity">${pet.rarity}</div>
       `;
@@ -776,11 +645,7 @@
   function showPetSpeech(text) {
     if (petSpeechTimeout) clearTimeout(petSpeechTimeout);
     const line = text || PET_SPEECH_LINES[Math.floor(Math.random() * PET_SPEECH_LINES.length)];
-    el.petSpeech.innerHTML = `
-      <div class="pet-speech-inner">
-        <svg class="bubble-bg" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><use href="#ic-bubble"></use></svg>
-        <span></span>
-      </div>`;
+    el.petSpeech.innerHTML = `<div class="pet-speech-inner"><span></span></div>`;
     el.petSpeech.querySelector('span').textContent = line;
     el.petSpeech.classList.remove('hidden');
     petSpeechTimeout = setTimeout(() => el.petSpeech.classList.add('hidden'), 3200);
@@ -1148,7 +1013,7 @@
 
       el.eggReveaRarity.textContent = pet.rarity;
       el.eggReveaRarity.className = 'egg-reveal-rarity ' + pet.rarity;
-      el.eggRevealEmoji.innerHTML = petSvgMarkup(pet);
+      el.eggRevealEmoji.textContent = pet.emoji;
       el.eggRevealName.textContent = pet.name;
 
       el.eggStageShaking.classList.add('hidden');

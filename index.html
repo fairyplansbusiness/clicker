@@ -15,61 +15,11 @@
 <canvas id="confetti-canvas"></canvas>
 
 <!-- ============================================================
-     HAND-DRAWN SVG ICON LIBRARY
-     Reusable static icons (no external image files). Parametric art
-     (plant growth stages, pet critters) is generated in script.js
-     and reuses the #ic-sparkle / #ic-star4-mini accents defined here.
+     Hand-drawn SVG icon library for garden decorations only — plant,
+     pet, egg, and sparkle art all use emoji (see script.js).
      ============================================================ -->
 <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
 <defs>
-
-  <symbol id="ic-sparkle" viewBox="0 0 24 24">
-    <path d="M12 1.5c.7 5.3 2.6 8 8 9-5.4 1-7.3 3.7-8 9-.7-5.3-2.6-8-8-9 5.4-1 7.3-3.7 8-9z"/>
-  </symbol>
-
-  <symbol id="ic-star4-mini" viewBox="0 0 24 24">
-    <path d="M12 5c.4 3 1.6 4.7 5 5.3-3.4.6-4.6 2.3-5 5.3-.4-3-1.6-4.7-5-5.3 3.4-.6 4.6-2.3 5-5.3z"/>
-  </symbol>
-
-  <symbol id="ic-pot" viewBox="0 0 100 40">
-    <path d="M14 6h72l-9 30a8 8 0 0 1-8 6H31a8 8 0 0 1-8-6z" fill="#e8a97c"/>
-    <rect x="10" y="0" width="80" height="12" rx="6" fill="#f2bd94"/>
-  </symbol>
-
-  <symbol id="ic-empty-pot" viewBox="0 0 120 110">
-    <ellipse cx="60" cy="100" rx="18" ry="4" fill="#e3d3ea" opacity=".5"/>
-    <path d="M28 46h64l-8 46a10 10 0 0 1-10 8H46a10 10 0 0 1-10-8z" fill="#e8a97c"/>
-    <rect x="24" y="34" width="72" height="16" rx="8" fill="#f2bd94"/>
-    <path d="M60 38c-2-10-12-12-16-6" stroke="#bcds9e" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <circle cx="42" cy="28" r="4.5" fill="#f7dfae"/>
-    <circle cx="34" cy="40" r="1.6" fill="#4a3b42" opacity=".6"/>
-    <circle cx="50" cy="40" r="1.6" fill="#4a3b42" opacity=".6"/>
-  </symbol>
-
-  <symbol id="ic-focus-bloom" viewBox="0 0 60 60">
-    <g fill="#ff9ec4">
-      <ellipse cx="30" cy="14" rx="8" ry="11"/>
-      <ellipse cx="30" cy="46" rx="8" ry="11"/>
-      <ellipse cx="14" cy="30" rx="11" ry="8"/>
-      <ellipse cx="46" cy="30" rx="11" ry="8"/>
-    </g>
-    <circle cx="30" cy="30" r="8" fill="#fff6d9"/>
-    <circle cx="27" cy="29" r="1.2" fill="#5c4a44"/>
-    <circle cx="33" cy="29" r="1.2" fill="#5c4a44"/>
-    <path d="M27 32.5q3 2 6 0" stroke="#5c4a44" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-  </symbol>
-
-  <symbol id="ic-egg" viewBox="0 0 100 120">
-    <ellipse cx="50" cy="64" rx="36" ry="46" fill="#fffaf0" stroke="#f0ddb8" stroke-width="3"/>
-    <circle cx="34" cy="46" r="3.6" fill="#f6dfae"/>
-    <circle cx="63" cy="70" r="3" fill="#f6dfae"/>
-    <circle cx="46" cy="92" r="3.2" fill="#f6dfae"/>
-    <circle cx="39" cy="58" r="2.3" fill="#7a5c40"/>
-    <circle cx="61" cy="58" r="2.3" fill="#7a5c40"/>
-    <path d="M40 68q10 8 20 0" stroke="#c98a5c" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <ellipse cx="30" cy="64" rx="4.5" ry="2.6" fill="#ffc9d9" opacity=".8"/>
-    <ellipse cx="70" cy="64" rx="4.5" ry="2.6" fill="#ffc9d9" opacity=".8"/>
-  </symbol>
 
   <symbol id="ic-fence" viewBox="0 0 120 50">
     <rect x="4" y="26" width="112" height="6" rx="3" fill="#f6ddb8"/>
@@ -144,9 +94,6 @@
     <circle cx="45" cy="24" r="6" fill="#ffb8d9"/>
   </symbol>
 
-  <symbol id="ic-bubble" viewBox="0 0 100 60">
-    <path d="M10 8 Q6 4 12 4 H88 Q96 4 96 14 V38 Q96 48 88 48 H34 L20 58 L24 48 H12 Q4 48 4 38 V14 Q4 8 10 8Z" fill="#fff" stroke="#e7c9e0" stroke-width="2"/>
-  </symbol>
 
 </defs>
 </svg>
@@ -161,7 +108,7 @@
     </div>
 
     <div class="stat-pill sparkles" title="Sparkles">
-      <svg class="icon-sparkle stat-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkle"></use></svg>
+      <span class="stat-emoji">✨</span>
       <span id="sparkle-count">0</span>
     </div>
 
@@ -198,14 +145,13 @@
       <div id="garden-stage" class="garden-stage">
         <div class="garden-ground"></div>
         <div id="garden-decorations" class="garden-decorations" aria-hidden="true"></div>
-        <div id="garden-plant" class="garden-plant"></div>
-        <div id="garden-pet" class="garden-pet"></div>
+        <div id="garden-plant" class="garden-plant">🌱</div>
+        <div id="garden-pet" class="garden-pet">🐣</div>
         <div id="pet-speech" class="pet-speech hidden" role="status"></div>
         <div id="garden-fx-layer" class="garden-fx-layer" aria-hidden="true"></div>
       </div>
-      <button id="garden-click-area" class="garden-click-hint" aria-label="Tap your garden for a sparkle">
-        Tap your garden for a sparkle!
-        <svg class="icon-sparkle icon-inline" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkle"></use></svg>
+      <button id="garden-click-area" class="garden-click-hint">
+        Tap your garden for a sparkle! ✨
       </button>
 
       <div class="focus-widget">
@@ -226,7 +172,7 @@
               <circle class="focus-ring-bg" cx="50" cy="50" r="45"></circle>
               <circle id="focus-ring-progress" class="focus-ring-progress" cx="50" cy="50" r="45"></circle>
             </svg>
-            <svg class="icon-focus-bloom" viewBox="0 0 60 60" aria-hidden="true"><use href="#ic-focus-bloom"></use></svg>
+            <span class="focus-ring-emoji">🌷</span>
           </div>
           <button id="focus-cancel-btn" class="ghost-btn">Cancel sprint</button>
         </div>
@@ -250,7 +196,7 @@
       <ul id="task-list" class="task-list"></ul>
 
       <div id="empty-state" class="empty-state hidden">
-        <svg class="icon-empty-pot" viewBox="0 0 120 110" aria-hidden="true"><use href="#ic-empty-pot"></use></svg>
+        <div class="empty-emoji">🌼</div>
         <p>No quests yet! Add one above to start your adventure~</p>
       </div>
 
@@ -267,9 +213,9 @@
       <button id="open-collection-btn" class="secondary-btn">📖 Open Collection</button>
 
       <div class="shop-box">
-        <h3 class="shop-title"><svg class="icon-egg-mini" viewBox="0 0 100 120" aria-hidden="true"><use href="#ic-egg"></use></svg> Mystery Egg</h3>
+        <h3 class="shop-title">🥚 Mystery Egg</h3>
         <p class="shop-desc">Hatch a new garden friend!</p>
-        <button id="buy-egg-btn" class="primary-btn">Open for 30 <svg class="icon-sparkle icon-inline" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkle"></use></svg></button>
+        <button id="buy-egg-btn" class="primary-btn">Open for 30 ✨</button>
       </div>
 
       <div class="stats-box">
@@ -292,11 +238,7 @@
 <!-- LEVEL UP MODAL -->
 <div id="levelup-modal" class="modal-overlay hidden">
   <div class="modal levelup-modal">
-    <div class="modal-sparkle-burst" aria-hidden="true">
-      <svg class="icon-sparkle burst-1" viewBox="0 0 24 24"><use href="#ic-sparkle"></use></svg>
-      <svg class="icon-sparkle burst-2" viewBox="0 0 24 24"><use href="#ic-sparkle"></use></svg>
-      <svg class="icon-sparkle burst-3" viewBox="0 0 24 24"><use href="#ic-sparkle"></use></svg>
-    </div>
+    <div class="modal-emoji-burst">🎉🌟🎉</div>
     <h2>Level Up!</h2>
     <p>Your garden grew! You're now</p>
     <p class="levelup-new-level">Lv. <span id="levelup-level-num">2</span> — <span id="levelup-title-text">Sprout</span></p>
@@ -308,12 +250,12 @@
 <div id="egg-modal" class="modal-overlay hidden">
   <div class="modal egg-modal">
     <div id="egg-stage-shaking" class="egg-stage">
-      <svg class="icon-egg" id="egg-emoji" viewBox="0 0 100 120" aria-hidden="true"><use href="#ic-egg"></use></svg>
+      <div class="egg-emoji" id="egg-emoji">🥚</div>
       <p class="egg-hint">shake shake...</p>
     </div>
     <div id="egg-stage-reveal" class="egg-reveal hidden">
       <div id="egg-reveal-rarity" class="egg-reveal-rarity">Common</div>
-      <div id="egg-reveal-emoji" class="egg-reveal-emoji"></div>
+      <div id="egg-reveal-emoji" class="egg-reveal-emoji">🐣</div>
       <div id="egg-reveal-name" class="egg-reveal-name">New Friend!</div>
       <p id="egg-reveal-dup" class="egg-reveal-dup hidden">Already had this one — converted to <span id="egg-dup-refund">15</span> ✨ instead!</p>
       <button class="primary-btn modal-close-btn" data-close="egg-modal">Sweet! 💗</button>
@@ -333,11 +275,7 @@
 <!-- FOCUS COMPLETE MODAL -->
 <div id="focus-complete-modal" class="modal-overlay hidden">
   <div class="modal focus-complete-modal">
-    <div class="modal-sparkle-burst" aria-hidden="true">
-      <svg class="icon-sparkle burst-1" viewBox="0 0 24 24"><use href="#ic-sparkle"></use></svg>
-      <svg class="icon-focus-bloom burst-2" viewBox="0 0 60 60"><use href="#ic-focus-bloom"></use></svg>
-      <svg class="icon-sparkle burst-3" viewBox="0 0 24 24"><use href="#ic-sparkle"></use></svg>
-    </div>
+    <div class="modal-emoji-burst">⏰🌷⏰</div>
     <h2>Sprint Complete!</h2>
     <p>Did you finish your quest? Mark it done below for a <strong>bonus x1.5 sparkles</strong>!</p>
     <button class="primary-btn modal-close-btn" data-close="focus-complete-modal">Got it! 💪</button>
